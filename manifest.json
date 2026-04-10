@@ -2,7 +2,7 @@
   "name": "Mon Guide Citoyen – Île-de-France",
   "short_name": "Guide Citoyen",
   "description": "Trouvez la bonne collectivité pour votre problème du quotidien en Île-de-France",
-  "start_url": "/index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1a3a6b",
