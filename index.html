@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Guide Citoyen">
+<meta name="theme-color" content="#1a3a6b">
+<link rel="manifest" href="manifest.json">
+<title>Mon Guide Citoyen – Île-de-France</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue-dark:#1a3a6b;--gold:#c8891a;--gold-light:#e8a020;
+  --gray-bg:#f4f6f9;--gray-light:#e8ecf0;
+  --text-dark:#1a1a2e;--text-mid:#4a5568;
+  --shadow:0 4px 20px rgba(26,58,107,.13);
+  --radius:18px;--radius-sm:10px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;width:100%;font-family:'Nunito',sans-serif;overflow:hidden;background:#1a1a2e;}
+body{display:flex;justify-content:center;align-items:center;}
+
+/* ─── DESKTOP : coque ─── */
+.phone{
+  width:390px;height:844px;background:var(--gray-bg);
+  border-radius:50px;overflow:hidden;display:flex;flex-direction:column;position:relative;
+  box-shadow:0 30px 80px rgba(0,0,0,.6),inset 0 0 0 2px rgba(255,255,255,.08);
+}
+
+/* ─── MOBILE : plein écran ─── */
+@media(max-width:500px){
+  body{background:var(--gray-bg);align-items:stretch;}
+  .phone{width:100%;height:100%;border-radius:0;box-shadow:none;
+    padding-top:var(--safe-top);padding-bottom:var(--safe-bottom);}
+}
+
+/* STATUS BAR */
+.status-bar{
+  background:var(--blue-dark);height:44px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;padding:0 22px;
+}
+.status-bar .time{color:#fff;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;}
+.status-icons{display:flex;gap:5px;color:#fff;font-size:13px;}
+
+/* SCREENS */
+.screens{flex:1;overflow:hidden;position:relative;}
+.screen{
+  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  opacity:0;transform:translateX(100%);
+  transition:opacity .32s ease,transform .32s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;-webkit-overflow-scrolling:touch;
+}
+.screen::-webkit-scrollbar{display:none;}
+.screen{scrollbar-width:none;}
+.screen.active{opacity:1;transform:translateX(0);pointer-events:all;}
+.screen.exit-left{opacity:0;transform:translateX(-45px);}
+.screen.enter-from-left{opacity:0;transform:translateX(-45px);}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  background:#fff;
+  height:calc(60px + var(--safe-bottom));
+  padding-bottom:var(--safe-bottom);
+  display:flex;border-top:1px solid var(--gray-light);
+  flex-shrink:0;box-shadow:0 -3px 14px rgba(0,0,0,.06);
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:3px;border:none;background:none;cursor:pointer;padding:6px 0;position:relative;
+}
+.nav-btn.active .nav-icon{color:var(--blue-dark);transform:scale(1.15);}
+.nav-btn.active .nav-label{color:var(--blue-dark);font-weight:800;}
+.nav-btn.active::after{
+  content:'';position:absolute;top:0;left:50%;
+  transform:translateX(-50%);
+  width:28px;height:3px;background:var(--blue-dark);border-radius:0 0 3px 3px;
+}
+.nav-icon{font-size:22px;color:#bbc;transition:.2s;}
+.nav-label{font-size:10px;color:#bbc;font-weight:600;}
+.notif-dot{position:absolute;top:8px;right:16px;width:8px;height:8px;background:#e74c3c;border-radius:50%;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.anim{animation:fadeUp .4s ease both;}
+.d1{animation-delay:.07s}.d2{animation-delay:.14s}.d3{animation-delay:.21s}
+.d4{animation-delay:.28s}.d5{animation-delay:.35s}.d6{animation-delay:.42s}
+
+/* ════ SCREEN 1 : ACCUEIL ════ */
+#s-home{background:linear-gradient(160deg,#1a3a6b 0%,#0f2752 55%,#1a3a6b 100%);}
+.home-hero{display:flex;flex-direction:column;align-items:center;padding:36px 28px 22px;text-align:center;}
+.logo-ring{
+  width:126px;height:126px;border-radius:50%;
+  background:linear-gradient(135deg,#c8891a,#e8a020,#f5c842);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 8px rgba(200,137,26,.2),0 18px 36px rgba(0,0,0,.3);
+  margin-bottom:20px;animation:pulse 3s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 8px rgba(200,137,26,.2),0 18px 36px rgba(0,0,0,.3);}
+  50%{box-shadow:0 0 0 16px rgba(200,137,26,.08),0 18px 36px rgba(0,0,0,.3);}
+}
+.logo-inner{
+  width:106px;height:106px;border-radius:50%;
+  background:linear-gradient(135deg,#1a3a6b,#0f2752);
+  border:3px solid rgba(200,137,26,.55);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.logo-emoji{font-size:36px;}
+.logo-sub{color:var(--gold-light);font-size:7px;font-weight:900;letter-spacing:1.5px;margin-top:3px;text-transform:uppercase;}
+.app-title{font-family:'Montserrat',sans-serif;font-size:25px;font-weight:900;color:#fff;margin-bottom:5px;}
+.app-title span{color:var(--gold-light);}
+.app-sub{color:rgba(255,255,255,.68);font-size:13px;font-weight:600;line-height:1.5;margin-bottom:24px;}
+.cta-btn{
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  color:#fff;border:none;border-radius:50px;padding:14px 36px;
+  font-size:14px;font-weight:800;letter-spacing:.5px;cursor:pointer;
+  text-transform:uppercase;font-family:'Nunito',sans-serif;
+  box-shadow:0 8px 22px rgba(200,137,26,.4);transition:.18s;
+}
+.cta-btn:active{transform:scale(.97);}
+.home-cards{padding:14px 18px 18px;display:flex;flex-direction:column;gap:11px;}
+.home-card{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.11);
+  border-radius:var(--radius);padding:13px 17px;display:flex;align-items:center;gap:13px;
+}
+.hc-icon{font-size:24px;width:36px;text-align:center;}
+.hc-text h4{color:#fff;font-size:13px;font-weight:700;}
+.hc-text p{color:rgba(255,255,255,.6);font-size:12px;margin-top:2px;}
+.region-badge{
+  margin:2px 18px 18px;background:rgba(255,255,255,.07);
+  border-radius:50px;padding:9px 16px;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+}
+.region-badge span{color:rgba(255,255,255,.6);font-size:12px;font-weight:600;}
+
+/* ════ SCREEN 2 : THÈMES ════ */
+#s-themes{background:var(--gray-bg);}
+.screen-header{background:var(--blue-dark);padding:20px 18px 18px;color:#fff;}
+.screen-header h2{font-family:'Montserrat',sans-serif;font-size:19px;font-weight:900;}
+.screen-header p{color:rgba(255,255,255,.68);font-size:12px;margin-top:3px;font-weight:600;}
+.searchbar{margin:14px 16px;background:#fff;border-radius:50px;padding:11px 16px;display:flex;align-items:center;gap:9px;box-shadow:var(--shadow);}
+.searchbar input{border:none;outline:none;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text-mid);flex:1;background:none;}
+.theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:0 16px 20px;}
+.theme-card{
+  border-radius:var(--radius);padding:18px 14px;display:flex;flex-direction:column;gap:8px;
+  cursor:pointer;border:none;box-shadow:var(--shadow);
+  position:relative;overflow:hidden;min-height:108px;text-align:left;transition:.18s;
+}
+.theme-card::after{content:'';position:absolute;bottom:-18px;right:-18px;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.1);}
+.theme-card:active{transform:scale(.96);}
+.tc-icon{font-size:30px;}.tc-label{color:#fff;font-size:13px;font-weight:800;line-height:1.3;}
+.tc-sub{color:rgba(255,255,255,.72);font-size:10px;font-weight:600;}
+.more-card{background:#fff;border:2px dashed var(--gray-light);border-radius:var(--radius);padding:18px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;min-height:108px;}
+.more-card .plus{font-size:24px;}
+.more-card p{color:var(--text-mid);font-size:12px;font-weight:700;text-align:center;}
+.c-red{background:linear-gradient(135deg,#c0392b,#e74c3c);}
+.c-teal{background:linear-gradient(135deg,#16a085,#1abc9c);}
+.c-blue{background:linear-gradient(135deg,#2980b9,#3498db);}
+.c-green{background:linear-gradient(135deg,#27ae60,#2ecc71);}
+.c-purple{background:linear-gradient(135deg,#8e44ad,#9b59b6);}
+.c-orange{background:linear-gradient(135deg,#d35400,#e67e22);}
+
+/* ════ SCREEN 3 : DÉTAIL ════ */
+#s-detail{background:var(--gray-bg);}
+.detail-header{padding:18px;display:flex;align-items:center;gap:12px;}
+.back-btn{background:rgba(255,255,255,.22);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:19px;flex-shrink:0;transition:.15s;}
+.back-btn:active{background:rgba(255,255,255,.38);}
+.dh-info h2{color:#fff;font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;}
+.dh-info p{color:rgba(255,255,255,.72);font-size:11px;font-weight:600;margin-top:2px;}
+.dh-icon{font-size:34px;margin-left:auto;}
+.detail-body{padding:14px;display:flex;flex-direction:column;gap:13px;}
+.info-card{background:#fff;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);}
+.ic-title{font-size:10px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--text-mid);margin-bottom:11px;display:flex;align-items:center;gap:5px;}
+.badge-who{border-radius:50px;padding:10px 16px;font-size:14px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;justify-content:center;width:100%;}
+.action-list{display:flex;flex-direction:column;gap:7px;}
+.action-item{display:flex;align-items:center;gap:10px;background:var(--gray-bg);border-radius:var(--radius-sm);padding:9px 13px;}
+.action-item .ai-icon{font-size:18px;}
+.action-item p{font-size:13px;font-weight:600;color:var(--text-dark);}
+.accordion{border-radius:var(--radius-sm);overflow:hidden;margin-top:8px;border:1px solid var(--gray-light);}
+.acc-item{border-bottom:1px solid var(--gray-light);}
+.acc-item:last-child{border-bottom:none;}
+.acc-trigger{background:var(--gray-bg);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:700;color:var(--text-dark);border:none;width:100%;text-align:left;gap:10px;}
+.acc-arrow{transition:.25s;font-size:12px;color:var(--text-mid);flex-shrink:0;}
+.acc-item.open .acc-arrow{transform:rotate(180deg);}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .3s cubic-bezier(.4,0,.2,1);background:#fff;}
+.acc-item.open .acc-body{max-height:300px;}
+.acc-content{padding:12px 14px;font-size:12px;color:var(--text-mid);line-height:1.7;}
+.contact-btns{display:flex;flex-direction:column;gap:9px;}
+.contact-btn{border:none;border-radius:50px;padding:13px 18px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Nunito',sans-serif;transition:.18s;text-decoration:none;width:100%;}
+.contact-btn:active{transform:scale(.97);opacity:.9;}
+.contact-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#fff;box-shadow:0 4px 14px rgba(200,137,26,.35);}
+.contact-btn.secondary{background:linear-gradient(135deg,#2980b9,#3498db);color:#fff;box-shadow:0 4px 14px rgba(52,152,219,.3);}
+
+/* ════ SCREEN 4 : LE SAVIEZ-VOUS ════ */
+#s-quiz{background:linear-gradient(160deg,#0f2752 0%,#1a3a6b 100%);}
+.quiz-header{padding:28px 18px 16px;text-align:center;}
+.quiz-header .q-icon{font-size:46px;}
+.quiz-header h2{font-family:'Montserrat',sans-serif;font-size:21px;font-weight:900;color:#fff;margin-top:8px;}
+.quiz-header p{color:rgba(255,255,255,.65);font-size:12px;margin-top:4px;font-weight:600;}
+.facts-list{padding:0 15px 22px;display:flex;flex-direction:column;gap:13px;}
+.fact-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:var(--radius);padding:18px;display:flex;gap:13px;align-items:flex-start;}
+.fact-num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;flex-shrink:0;font-family:'Montserrat',sans-serif;}
+.n1{background:linear-gradient(135deg,#c0392b,#e74c3c);}
+.n2{background:linear-gradient(135deg,#27ae60,#2ecc71);}
+.n3{background:linear-gradient(135deg,var(--gold),var(--gold-light));}
+.fact-content h4{color:#fff;font-size:14px;font-weight:800;margin-bottom:5px;}
+.fact-content p{color:rgba(255,255,255,.7);font-size:12px;line-height:1.65;}
+.schema{display:flex;align-items:center;gap:7px;margin-top:9px;flex-wrap:wrap;}
+.s-box{background:rgba(255,255,255,.14);border-radius:8px;padding:5px 9px;font-size:11px;color:#fff;font-weight:700;text-align:center;}
+.s-arrow{color:var(--gold-light);font-size:16px;}
+
+/* MODAL */
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.48);display:flex;align-items:flex-end;z-index:300;opacity:0;pointer-events:none;transition:opacity .28s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-sheet{background:#fff;border-radius:22px 22px 0 0;padding:18px 18px calc(18px + var(--safe-bottom));width:100%;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);position:relative;}
+.modal-overlay.open .modal-sheet{transform:translateY(0);}
+.modal-handle{width:34px;height:4px;background:var(--gray-light);border-radius:2px;margin:0 auto 15px;}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--gray-light);border:none;border-radius:50%;width:28px;height:28px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.modal-sheet h3{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;color:var(--text-dark);margin-bottom:9px;}
+.modal-hint{color:var(--text-mid);font-size:12px;line-height:1.5;}
+.modal-search{margin-top:13px;display:flex;align-items:center;gap:9px;background:var(--gray-bg);border-radius:50px;padding:11px 15px;}
+.modal-search input{border:none;outline:none;background:none;font-family:'Nunito',sans-serif;font-size:14px;flex:1;color:var(--text-dark);}
+.modal-results{margin-top:11px;display:flex;flex-direction:column;gap:7px;max-height:220px;overflow-y:auto;}
+.res-btn{background:var(--gray-bg);border-radius:var(--radius-sm);padding:11px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-dark);display:flex;align-items:center;gap:10px;border:none;text-align:left;width:100%;transition:.15s;}
+.res-btn:active{background:var(--gray-light);}
+.res-badge{font-size:10px;font-weight:700;color:#fff;padding:3px 8px;border-radius:50px;margin-left:auto;flex-shrink:0;}
+
+/* Bannière install PWA */
+#install-banner{
+  position:absolute;bottom:calc(60px + var(--safe-bottom) + 10px);left:50%;
+  transform:translateX(-50%);
+  background:var(--blue-dark);color:#fff;
+  border-radius:14px;padding:11px 18px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 6px 24px rgba(0,0,0,.3);
+  font-size:12px;font-weight:700;
+  z-index:200;white-space:nowrap;
+  animation:fadeUp .4s ease;
+  cursor:pointer;
+}
+#install-banner .ib-close{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="time" id="clock">--:--</span>
+    <div class="status-icons"><span>📶</span><span>🔋</span></div>
+  </div>
+
+  <!-- SCREENS -->
+  <div class="screens">
+
+    <!-- S1 : ACCUEIL -->
+    <div class="screen active" id="s-home">
+      <div class="home-hero anim">
+        <div class="logo-ring"><div class="logo-inner">
+          <div class="logo-emoji">🧭</div>
+          <div class="logo-sub">Île-de-France</div>
+        </div></div>
+        <h1 class="app-title">Mon Guide <span>Citoyen</span></h1>
+        <p class="app-sub">Votre allié au quotidien<br>en Île-de-France</p>
+        <button class="cta-btn" onclick="navGo('s-themes','nav-themes')">🔍 Découvrir l'app</button>
+      </div>
+      <div class="home-cards">
+        <div class="home-card anim d1"><div class="hc-icon">🏛️</div><div class="hc-text"><h4>Trouvez la bonne collectivité</h4><p>Commune, Département ou Région — on vous guide.</p></div></div>
+        <div class="home-card anim d2"><div class="hc-icon">📞</div><div class="hc-text"><h4>Contactez le bon interlocuteur</h4><p>Accédez directement aux services compétents.</p></div></div>
+        <div class="home-card anim d3"><div class="hc-icon">💡</div><div class="hc-text"><h4>Comprenez la décentralisation</h4><p>Quiz, infos clés et astuces citoyennes.</p></div></div>
+      </div>
+      <div class="region-badge anim d4"><span>⭐</span><span>Un projet de la Région Île-de-France</span></div>
+    </div>
+
+    <!-- S2 : THÈMES -->
+    <div class="screen" id="s-themes">
+      <div class="screen-header"><h2>Trouver ma Collectivité</h2><p>Choisissez votre thématique</p></div>
+      <div class="searchbar">
+        <span>🔍</span>
+        <input type="text" id="search-input" placeholder="Rechercher un problème…"
+          oninput="filterThemes(this.value)" onfocus="openSearch()">
+      </div>
+      <div class="theme-grid">
+        <button class="theme-card c-red anim d1"    onclick="showDetail('transports')"><div class="tc-icon">🚌</div><div class="tc-label">Transports<br>Franciliens</div><div class="tc-sub">IDF Mobilités</div></button>
+        <button class="theme-card c-teal anim d2"   onclick="showDetail('lycees')"><div class="tc-icon">🎓</div><div class="tc-label">Lycées &<br>Formation</div><div class="tc-sub">Région</div></button>
+        <button class="theme-card c-blue anim d3"   onclick="showDetail('social')"><div class="tc-icon">🏠</div><div class="tc-label">Aide Sociale &<br>Logement</div><div class="tc-sub">Département</div></button>
+        <button class="theme-card c-green anim d4"  onclick="showDetail('environnement')"><div class="tc-icon">🌳</div><div class="tc-label">Environnement<br>& Nature</div><div class="tc-sub">Région / Commune</div></button>
+        <button class="theme-card c-purple anim d5" onclick="showDetail('securite')"><div class="tc-icon">🛡️</div><div class="tc-label">Sécurité &<br>Police</div><div class="tc-sub">Ville / État</div></button>
+        <button class="theme-card c-orange anim d6" onclick="showDetail('sante')"><div class="tc-icon">⚕️</div><div class="tc-label">Santé &<br>Handicap</div><div class="tc-sub">Département</div></button>
+        <div class="more-card" onclick="openSearch()"><div class="plus">➕</div><p>Plus de<br>thématiques…</p></div>
+      </div>
+    </div>
+
+    <!-- S3 : DÉTAIL -->
+    <div class="screen" id="s-detail">
+      <div class="detail-header c-red" id="d-header">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <div class="dh-info"><h2 id="d-title">—</h2><p id="d-sub">—</p></div>
+        <div class="dh-icon" id="d-icon"></div>
+      </div>
+      <div class="detail-body">
+        <div class="info-card anim"><div class="ic-title">🏛️ Collectivité compétente</div><div class="badge-who" id="d-who">—</div></div>
+        <div class="info-card anim d1">
+          <div class="ic-title">⚡ Actions concrètes</div>
+          <div class="action-list" id="d-actions"></div>
+          <div class="accordion" id="d-accordion"></div>
+        </div>
+        <div class="info-card anim d2"><div class="ic-title">📞 Contacter le bon interlocuteur</div><div class="contact-btns" id="d-contacts"></div></div>
+      </div>
+    </div>
+
+    <!-- S4 : SAVIEZ-VOUS -->
+    <div class="screen" id="s-quiz">
+      <div class="quiz-header">
+        <div class="q-icon">💡</div>
+        <h2>Le Saviez-Vous ?</h2>
+        <p>3 infos-clés sur la décentralisation</p>
+      </div>
+      <div class="facts-list">
+        <div class="fact-card anim">
+          <div class="fact-num n1">1</div>
+          <div class="fact-content">
+            <h4>La Décentralisation depuis 1982</h4>
+            <p>L'État a transféré des compétences aux collectivités. Chaque niveau a son domaine : la Région planifie, le Département solidarise, la Commune agit au quotidien.</p>
+            <div class="schema"><div class="s-box">État 🇫🇷</div><div class="s-arrow">→</div><div class="s-box">Région 🗺️</div><div class="s-arrow">→</div><div class="s-box">Dpt</div><div class="s-arrow">→</div><div class="s-box">Commune 🏘️</div></div>
+          </div>
+        </div>
+        <div class="fact-card anim d2">
+          <div class="fact-num n2">2</div>
+          <div class="fact-content">
+            <h4>Lycée ≠ Collège</h4>
+            <p>Ce n'est pas la même collectivité ! La <strong style="color:#1abc9c">Région</strong> gère les lycées. Le <strong style="color:#3498db">Département</strong> gère les collèges.</p>
+            <div class="schema"><div class="s-box">🎓 Lycée<br><small>→ Région</small></div><div class="s-arrow" style="color:#aaa">vs</div><div class="s-box">🏫 Collège<br><small>→ Dépt.</small></div></div>
+          </div>
+        </div>
+        <div class="fact-card anim d4">
+          <div class="fact-num n3">3</div>
+          <div class="fact-content">
+            <h4>La Mairie : premier réflexe !</h4>
+            <p>Voirie locale, urbanisme, état civil, sécurité de proximité : c'est la <strong style="color:#f5c842">Mairie</strong> qu'il faut contacter en premier lieu.</p>
+            <div class="schema"><div class="s-box">🏛️ Mairie</div><div class="s-arrow">→</div><div class="s-box">Voirie 🛣️</div><div class="s-arrow" style="color:#aaa">+</div><div class="s-box">État civil 📄</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL RECHERCHE -->
+    <div class="modal-overlay" id="modal" onclick="handleModalClick(event)">
+      <div class="modal-sheet">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="modal-handle"></div>
+        <h3>🔍 Rechercher</h3>
+        <p class="modal-hint">Décrivez votre problème pour trouver la bonne collectivité.</p>
+        <div class="modal-search"><span>🔍</span><input type="text" id="modal-input" placeholder="Ex : mon bus est en retard…" oninput="updateResults(this.value)" autocomplete="off"></div>
+        <div class="modal-results" id="modal-results"></div>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="nav-home"   onclick="navGo('s-home','nav-home')"><div class="nav-icon">🏠</div><div class="nav-label">Accueil</div></button>
+    <button class="nav-btn" id="nav-themes" onclick="navGo('s-themes','nav-themes')"><div class="nav-icon">🗂️</div><div class="nav-label">Thèmes</div></button>
+    <button class="nav-btn" id="nav-quiz"   onclick="navGo('s-quiz','nav-quiz')"><div class="nav-icon">💡</div><div class="nav-label">Le Sav.-vous</div><div class="notif-dot"></div></button>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+/* ══════════════════════════════
+   HORLOGE (heure locale → Paris)
+══════════════════════════════ */
+function tick(){
+  try{
+    // Heure locale du téléphone (= Paris si l'utilisateur est en France)
+    const now=new Date();
+    const h=String(now.getHours()).padStart(2,'0');
+    const m=String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('clock').textContent=h+':'+m;
+  }catch(e){
+    // Fallback : timezone Paris explicite
+    document.getElementById('clock').textContent=
+      new Date().toLocaleTimeString('fr-FR',{timeZone:'Europe/Paris',hour:'2-digit',minute:'2-digit'});
+  }
+}
+tick();
+// Mise à jour à la prochaine minute pile, puis toutes les 60s
+const now=new Date();
+const msToNextMin=(60-now.getSeconds())*1000-now.getMilliseconds();
+setTimeout(()=>{ tick(); setInterval(tick,60000); }, msToNextMin);
+
+/* ══════════════════════════════
+   DONNÉES THÈMES
+══════════════════════════════ */
+const THEMES={
+  transports:{title:'Transports Franciliens',icon:'🚌',sub:'Collectivité : Île-de-France Mobilités',who:'🚌 Île-de-France Mobilités',whoBg:'linear-gradient(135deg,#c0392b,#e74c3c)',color:'c-red',
+    actions:[{icon:'🚇',text:'Gestion du réseau RATP / SNCF'},{icon:'🎫',text:'Tarification Navigo & abonnements'},{icon:'🗺️',text:'Planification des nouvelles lignes'},{icon:'♿',text:'Accessibilité des transports'}],
+    accordion:[{h:'Qui gère quoi exactement ?',c:'IDF Mobilités organise tous les transports collectifs franciliens : métro, RER, bus, tramway, transilien. La RATP et la SNCF sont ses opérateurs sous contrat.'},{h:'Combien coûte un Navigo ?',c:'Le forfait Navigo toutes zones coûte 86,40 €/mois pour les adultes. Des réductions existent pour les jeunes, demandeurs d\'emploi et personnes à faibles revenus.'}],
+    contacts:[{label:'🌐 Site IDF Mobilités',url:'https://www.iledefrance-mobilites.fr',type:'primary'},{label:'⚠️ Infos trafic temps réel',url:'https://www.iledefrance-mobilites.fr/les-informations-trafic',type:'secondary'}]},
+  lycees:{title:'Lycées & Formation',icon:'🎓',sub:'Collectivité : Région Île-de-France',who:'🗺️ Région Île-de-France',whoBg:'linear-gradient(135deg,#16a085,#1abc9c)',color:'c-teal',
+    actions:[{icon:'🏗️',text:'Construction & entretien des lycées'},{icon:'💻',text:'Équipement numérique (tablettes)'},{icon:'🍽️',text:'Aide à la restauration scolaire'},{icon:'🚌',text:'Financement des transports scolaires'}],
+    accordion:[{h:'Quelles aides pour les lycéens ?',c:'La Région propose des aides pour les manuels scolaires, l\'équipement sportif, les voyages scolaires, et des bourses régionales pour les apprentis.'},{h:'Différence Région / Académie ?',c:'La Région s\'occupe des bâtiments et conditions matérielles. L\'Académie (État) gère les enseignants, les programmes et les examens.'}],
+    contacts:[{label:'🎓 Lycées – Région IDF',url:'https://www.iledefrance.fr/les-lycees',type:'primary'},{label:'💰 Aides et bourses lycéens',url:'https://www.iledefrance.fr/aides-scolaires',type:'secondary'}]},
+  social:{title:'Aide Sociale & Logement',icon:'🏠',sub:'Collectivité : Département',who:'🏛️ Conseil Départemental',whoBg:'linear-gradient(135deg,#2980b9,#3498db)',color:'c-blue',
+    actions:[{icon:'💶',text:'RSA – Revenu de Solidarité Active'},{icon:'👴',text:'APA – Aide aux personnes âgées'},{icon:'🏠',text:'Logement social (HLM)'},{icon:'👶',text:'Protection de l\'enfance'}],
+    accordion:[{h:'Comment demander le RSA ?',c:'Le RSA se demande au Conseil Départemental ou via la CAF. Il est attribué aux personnes sans ressources suffisantes à partir de 25 ans.'},{h:'Comment demander un HLM ?',c:'La demande se fait en ligne sur le portail national. Vous recevrez un numéro unique départemental (NUD) pour suivre votre dossier.'}],
+    contacts:[{label:'🏠 Demande logement social',url:'https://www.demande-logement-social.gouv.fr',type:'primary'},{label:'💶 CAF – Aides sociales',url:'https://www.caf.fr',type:'secondary'}]},
+  environnement:{title:'Environnement & Nature',icon:'🌳',sub:'Collectivité : Région & Commune',who:'🌳 Région & Commune',whoBg:'linear-gradient(135deg,#27ae60,#2ecc71)',color:'c-green',
+    actions:[{icon:'🌿',text:'Gestion des espaces verts régionaux'},{icon:'♻️',text:'Collecte et tri des déchets'},{icon:'💧',text:'Qualité de l\'eau et assainissement'},{icon:'🌬️',text:'Lutte contre la pollution de l\'air'}],
+    accordion:[{h:'Qui gère les forêts en IDF ?',c:'Les forêts régionales (Fontainebleau, Rambouillet…) sont gérées par la Région et l\'ONF. La Commune gère ses propres parcs et jardins.'},{h:'Comment signaler une pollution ?',c:'Vous pouvez signaler une pollution de l\'air à AirParif, une pollution de l\'eau à votre mairie ou à l\'Agence de l\'Eau Seine-Normandie.'}],
+    contacts:[{label:'🌿 Environnement – Région IDF',url:'https://www.iledefrance.fr/environnement',type:'primary'},{label:'💨 AirParif – Qualité de l\'air',url:'https://www.airparif.fr',type:'secondary'}]},
+  securite:{title:'Sécurité & Police',icon:'🛡️',sub:'Collectivité : Ville / État',who:'🛡️ Mairie & Préfecture',whoBg:'linear-gradient(135deg,#8e44ad,#9b59b6)',color:'c-purple',
+    actions:[{icon:'👮',text:'Police municipale (Commune)'},{icon:'🚔',text:'Police nationale (État / Préfecture)'},{icon:'🚒',text:'Pompiers – SDIS (Département)'},{icon:'📹',text:'Vidéoprotection urbaine (Commune)'}],
+    accordion:[{h:'Police municipale ou nationale ?',c:'La police municipale (mairie) gère la tranquillité locale : stationnement, bruit, marchés. La police nationale traite les délits et crimes.'},{h:'Comment porter plainte en ligne ?',c:'Une pré-plainte en ligne est possible pour les vols et escroqueries via le portail gouvernemental, sans déplacement au commissariat.'}],
+    contacts:[{label:'📝 Pré-plainte en ligne',url:'https://www.pre-plainte-en-ligne.gouv.fr',type:'primary'},{label:'🚒 Pompiers de Paris (BSPP)',url:'https://www.pompiersparis.fr',type:'secondary'}]},
+  sante:{title:'Santé & Handicap',icon:'⚕️',sub:'Collectivité : Département / État',who:'⚕️ Département & ARS',whoBg:'linear-gradient(135deg,#d35400,#e67e22)',color:'c-orange',
+    actions:[{icon:'♿',text:'MDPH – Maison Départementale du Handicap'},{icon:'🏥',text:'Organisation des soins (ARS – État)'},{icon:'💊',text:'PMI – Protection Maternelle Infantile'},{icon:'🧓',text:'EHPAD et maisons de retraite'}],
+    accordion:[{h:'À quoi sert la MDPH ?',c:'La MDPH évalue les situations de handicap et attribue des aides comme l\'AAH, la carte mobilité inclusion, et oriente vers des établissements adaptés.'},{h:'Comment trouver un médecin ?',c:'Doctolib et Ameli permettent de trouver des médecins disponibles. Pour les urgences non vitales, les maisons médicales de garde sont ouvertes nuit et week-end.'}],
+    contacts:[{label:'♿ MDPH – Portail national',url:'https://www.mdph.fr',type:'primary'},{label:'🏥 Trouver un médecin',url:'https://www.doctolib.fr',type:'secondary'}]}
+};
+const KEYWORDS={
+  transports:['bus','metro','métro','rer','train','navigo','transport','retard','sncf','ratp','tramway'],
+  lycees:['lycée','lycee','école','formation','bourse','tablette','scolaire','enseignement'],
+  social:['rsa','logement','hlm','aide sociale','chômage','chomage','caf'],
+  environnement:['pollution','déchet','dechets','nature','forêt','eau','air','vert','recyclage'],
+  securite:['police','sécurité','securite','agression','plainte','cambriolage','bruit','pompier'],
+  sante:['médecin','medecin','santé','handicap','mdph','hôpital','hopital','urgence','pharmacie']
+};
+
+/* ══════════════════════════════
+   NAVIGATION + BOUTON RETOUR ANDROID
+   On utilise history.pushState pour que
+   le bouton retour Android intercepte popstate
+══════════════════════════════ */
+let cur='s-home';
+const NAV_SCREENS=['s-home','s-themes','s-quiz']; // écrans de nav principale
+
+// État initial
+history.replaceState({screen:'s-home',modal:false},'','#s-home');
+
+// Écoute du bouton retour Android / navigateur
+window.addEventListener('popstate', e=>{
+  if(!e.state) return;
+  if(e.state.modal){
+    // Était ouvert avec modal → ferme le modal sans changer d'écran
+    _closeModal();
+    return;
+  }
+  const target=e.state.screen||'s-home';
+  _switchTo(target, false); // false = ne pas pusher dans l'historique
+});
+
+function _switchTo(id, push=true){
+  if(id===cur) return;
+  const prev=cur;
+  // Animation sortie
+  document.getElementById(cur).classList.add('exit-left');
+  document.getElementById(cur).classList.remove('active');
+  setTimeout(()=>document.getElementById(prev).classList.remove('exit-left'),400);
+  // Animation entrée
+  document.getElementById(id).classList.add('active');
+  document.getElementById(id).scrollTop=0;
+  cur=id;
+  if(push) history.pushState({screen:id,modal:false},'','#'+id);
+  _syncNav(id);
+}
+
+function goTo(id){   _switchTo(id, true); }
+function goBack(){   history.back(); }  // ← bouton ← dans l'UI = même que Android back
+function navGo(id){
+  _switchTo(id, true);
+  // Met aussi à jour les boutons nav
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  // syncNav gère ça
+}
+
+function _syncNav(id){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const m={'s-home':'nav-home','s-themes':'nav-themes','s-quiz':'nav-quiz'};
+  if(m[id]) document.getElementById(m[id]).classList.add('active');
+}
+
+// Surcharge des clics nav pour utiliser goTo
+document.getElementById('nav-home').onclick=()=>_switchTo('s-home');
+document.getElementById('nav-themes').onclick=()=>_switchTo('s-themes');
+document.getElementById('nav-quiz').onclick=()=>_switchTo('s-quiz');
+
+/* ══════════════════════════════
+   DÉTAIL THÈME
+══════════════════════════════ */
+function showDetail(key){
+  const t=THEMES[key];
+  document.getElementById('d-title').textContent=t.title;
+  document.getElementById('d-sub').textContent=t.sub;
+  document.getElementById('d-icon').textContent=t.icon;
+  const who=document.getElementById('d-who');
+  who.textContent=t.who; who.style.background=t.whoBg;
+  document.getElementById('d-header').className='detail-header '+t.color;
+  document.getElementById('d-actions').innerHTML=t.actions.map(a=>`<div class="action-item"><span class="ai-icon">${a.icon}</span><p>${a.text}</p></div>`).join('');
+  document.getElementById('d-accordion').innerHTML=t.accordion.map((item,i)=>`
+    <div class="acc-item" id="acc-${key}-${i}">
+      <button class="acc-trigger" onclick="toggleAcc('acc-${key}-${i}')"><span>${item.h}</span><span class="acc-arrow">▼</span></button>
+      <div class="acc-body"><div class="acc-content">${item.c}</div></div>
+    </div>`).join('');
+  document.getElementById('d-contacts').innerHTML=t.contacts.map(c=>`<a class="contact-btn ${c.type}" href="${c.url}" target="_blank" rel="noopener noreferrer">${c.label}</a>`).join('');
+  _closeModal();
+  goTo('s-detail');
+}
+
+function toggleAcc(id){
+  const el=document.getElementById(id);
+  const was=el.classList.contains('open');
+  document.querySelectorAll('.acc-item').forEach(i=>i.classList.remove('open'));
+  if(!was) el.classList.add('open');
+}
+
+/* ══════════════════════════════
+   RECHERCHE / MODAL
+══════════════════════════════ */
+function allResults(){
+  const cols={'c-red':'#e74c3c','c-teal':'#1abc9c','c-blue':'#3498db','c-green':'#2ecc71','c-purple':'#9b59b6','c-orange':'#e67e22'};
+  return Object.keys(THEMES).map(k=>{
+    const t=THEMES[k];
+    return `<button class="res-btn" onclick="showDetail('${k}')"><span>${t.icon}</span><span style="flex:1">${t.title}</span><span class="res-badge" style="background:${cols[t.color]}">${t.sub.replace('Collectivité : ','')}</span></button>`;
+  }).join('');
+}
+function updateResults(v){
+  v=v.toLowerCase().trim();
+  if(!v){document.getElementById('modal-results').innerHTML=allResults();return;}
+  const matches=Object.keys(THEMES).filter(k=>{
+    const t=THEMES[k]; const kws=KEYWORDS[k]||[];
+    return t.title.toLowerCase().includes(v)||kws.some(kw=>kw.includes(v)||v.includes(kw));
+  });
+  document.getElementById('modal-results').innerHTML=matches.length
+    ?matches.map(k=>`<button class="res-btn" onclick="showDetail('${k}')"><span>${THEMES[k].icon}</span><span>${THEMES[k].title}</span></button>`).join('')
+    :`<div class="res-btn" style="color:var(--text-mid);cursor:default;">Aucun résultat — essayez un autre mot</div>`;
+}
+function filterThemes(v){if(!v)return;openSearch();document.getElementById('modal-input').value=v;updateResults(v);}
+
+function openSearch(){
+  document.getElementById('modal-input').value='';
+  document.getElementById('modal-results').innerHTML=allResults();
+  document.getElementById('modal').classList.add('open');
+  // Pousse un état modal dans l'historique → retour Android = ferme le modal
+  history.pushState({screen:cur,modal:true},'','#modal');
+  setTimeout(()=>document.getElementById('modal-input').focus(),350);
+}
+function _closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('search-input').value='';
+}
+function closeModal(){
+  _closeModal();
+  // Si l'état actuel est "modal", on retire de l'historique
+  if(history.state&&history.state.modal) history.back();
+}
+function handleModalClick(e){if(e.target===document.getElementById('modal'))closeModal();}
+
+/* ══════════════════════════════
+   PWA – Service Worker
+══════════════════════════════ */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+
+/* ══════════════════════════════
+   PWA – Bannière "Installer l'app"
+══════════════════════════════ */
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  showInstallBanner();
+});
+
+function showInstallBanner(){
+  const b=document.createElement('div');
+  b.id='install-banner';
+  b.innerHTML=`<span>📲</span><span>Installer l'app sur votre écran d'accueil</span><button class="ib-close" onclick="dismissBanner(event)">✕</button>`;
+  b.onclick=installApp;
+  document.getElementById('phone').appendChild(b);
+}
+function installApp(e){
+  if(e.target.classList.contains('ib-close'))return;
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(()=>{deferredPrompt=null;dismissBanner();});
+}
+function dismissBanner(e){
+  if(e)e.stopPropagation();
+  const b=document.getElementById('install-banner');
+  if(b)b.remove();
+}
+window.addEventListener('appinstalled',()=>dismissBanner());
+</script>
+</body>
+</html>
