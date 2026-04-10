@@ -1,7 +1,7 @@
 {
   "name": "Mon Guide Citoyen – Île-de-France",
   "short_name": "Guide Citoyen",
-  "description": "Trouvez la bonne collectivité pour votre problème du quotidien en Île-de-France",
+  "description": "Trouvez la bonne collectivité pour votre problème du quotidien",
   "start_url": "index.html",
   "display": "standalone",
   "orientation": "portrait",
@@ -21,7 +21,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "categories": ["education", "government", "utilities"],
-  "screenshots": []
+  ]
 }
