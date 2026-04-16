@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a3a6b">
+<link rel="manifest" href="manifest.json">
+<title>Mon Guide Citoyen</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bl:#1a3a6b;--go:#c8891a;--g2:#e8a020;--bg:#f4f6f9;--li:#e8ecf0;--tx:#1a1a2e;--md:#4a5568;--sh:0 4px 20px rgba(26,58,107,.12);--r:18px;--rs:10px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;width:100%;overflow:hidden;font-family:'Nunito',sans-serif}
+body{background:#111827;display:flex;justify-content:center;align-items:center}
+.app{width:390px;height:844px;border-radius:46px;overflow:hidden;display:flex;flex-direction:column;background:var(--bg);box-shadow:0 30px 80px rgba(0,0,0,.65)}
+@media(max-width:500px){body{background:var(--bg);align-items:stretch}.app{width:100%;height:100%;border-radius:0;box-shadow:none;padding-top:var(--st);padding-bottom:var(--sb)}}
+.pages{flex:1;min-height:0;overflow:hidden;position:relative}
+.pg{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;opacity:0;transform:translateX(100%);pointer-events:none;transition:opacity .25s,transform .25s cubic-bezier(.4,0,.2,1);-webkit-overflow-scrolling:touch}
+.pg::-webkit-scrollbar{display:none}
+.pg.on{opacity:1;transform:none;pointer-events:all}
+.pg.out{opacity:0;transform:translateX(-26px);pointer-events:none}
+.bnav{background:#fff;height:calc(56px + var(--sb));padding-bottom:var(--sb);display:flex;border-top:1px solid var(--li);flex-shrink:0;box-shadow:0 -2px 10px rgba(0,0,0,.05)}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:none;cursor:pointer;padding:5px 0;position:relative}
+.bn.sel .bi{color:var(--bl);transform:scale(1.12)}.bn.sel .bt{color:var(--bl);font-weight:800}
+.bn.sel::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:3px;background:var(--bl);border-radius:0 0 3px 3px}
+.bi{font-size:20px;color:#bbc;transition:.15s}.bt{font-size:10px;color:#bbc;font-weight:600}
+.dot{position:absolute;top:6px;right:13px;width:7px;height:7px;background:#e74c3c;border-radius:50%}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.a{animation:fu .36s ease both}.a1{animation-delay:.06s}.a2{animation-delay:.12s}.a3{animation-delay:.18s}.a4{animation-delay:.24s}.a5{animation-delay:.30s}.a6{animation-delay:.36s}
+#p0{background:linear-gradient(160deg,#1a3a6b 0%,#0f2752 55%,#1a3a6b 100%)}
+.hero{display:flex;flex-direction:column;align-items:center;padding:34px 24px 18px;text-align:center}
+.lr{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#c8891a,#e8a020,#f5c842);display:flex;align-items:center;justify-content:center;margin-bottom:16px;animation:gl 3s ease-in-out infinite}
+@keyframes gl{0%,100%{box-shadow:0 0 0 6px rgba(200,137,26,.2),0 14px 30px rgba(0,0,0,.3)}50%{box-shadow:0 0 0 14px rgba(200,137,26,.07),0 14px 30px rgba(0,0,0,.3)}}
+.li2{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#1a3a6b,#0f2752);border:3px solid rgba(200,137,26,.5);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.li2 img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.lf{font-size:34px;display:none}
+.at{font-family:'Montserrat',sans-serif;font-size:23px;font-weight:900;color:#fff;margin-bottom:4px}
+.at span{color:var(--g2)}.as{color:rgba(255,255,255,.65);font-size:13px;font-weight:600;line-height:1.5;margin-bottom:20px}
+.cta{background:linear-gradient(135deg,var(--go),var(--g2));color:#fff;border:none;border-radius:50px;padding:13px 32px;font-size:14px;font-weight:800;cursor:pointer;text-transform:uppercase;font-family:'Nunito',sans-serif;box-shadow:0 7px 18px rgba(200,137,26,.38);transition:.15s}
+.cta:active{transform:scale(.97)}
+.hcs{padding:12px 16px 15px;display:flex;flex-direction:column;gap:9px}
+.hc{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:12px 15px;display:flex;align-items:center;gap:11px}
+.hci{font-size:22px;width:32px;text-align:center}.hct h4{color:#fff;font-size:13px;font-weight:700}.hct p{color:rgba(255,255,255,.57);font-size:11px;margin-top:2px}
+.rb{margin:0 16px 16px;background:rgba(255,255,255,.07);border-radius:50px;padding:8px 14px;display:flex;align-items:center;justify-content:center;gap:8px}
+.rb span{color:rgba(255,255,255,.57);font-size:12px;font-weight:600}
+#p1{background:var(--bg)}
+.sh{background:var(--bl);padding:17px 16px 15px;color:#fff}.sh h2{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900}.sh p{color:rgba(255,255,255,.65);font-size:12px;margin-top:3px;font-weight:600}
+.sbar{margin:12px 14px;background:#fff;border-radius:50px;padding:10px 14px;display:flex;align-items:center;gap:8px;box-shadow:var(--sh);cursor:pointer}
+.sbp{font-size:14px;color:#a0aec0;flex:1;font-weight:600}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 14px 16px}
+.tc{border-radius:var(--r);padding:16px 12px;display:flex;flex-direction:column;gap:6px;cursor:pointer;border:none;box-shadow:var(--sh);position:relative;overflow:hidden;min-height:102px;text-align:left;transition:.15s}
+.tc::after{content:'';position:absolute;bottom:-14px;right:-14px;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.1)}
+.tc:active{transform:scale(.96)}
+.tci{font-size:28px}.tcl{color:#fff;font-size:12px;font-weight:800;line-height:1.3}.tcs{color:rgba(255,255,255,.7);font-size:10px;font-weight:600}
+.mc{background:#fff;border:2px dashed var(--li);border-radius:var(--r);padding:16px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;min-height:102px}
+.mc .pl{font-size:22px}.mc p{color:var(--md);font-size:12px;font-weight:700;text-align:center}
+.cr{background:linear-gradient(135deg,#c0392b,#e74c3c)}.ct{background:linear-gradient(135deg,#16a085,#1abc9c)}.cb{background:linear-gradient(135deg,#2980b9,#3498db)}.cg{background:linear-gradient(135deg,#27ae60,#2ecc71)}.cp{background:linear-gradient(135deg,#8e44ad,#9b59b6)}.co{background:linear-gradient(135deg,#d35400,#e67e22)}
+#p2{background:var(--bg)}
+.dh{padding:15px;display:flex;align-items:center;gap:10px}
+.bk{background:rgba(255,255,255,.2);border:none;border-radius:50%;width:33px;height:33px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:18px;flex-shrink:0}
+.bk:active{background:rgba(255,255,255,.35)}
+.dhi h2{color:#fff;font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900}.dhi p{color:rgba(255,255,255,.7);font-size:11px;font-weight:600;margin-top:2px}
+.dhx{font-size:30px;margin-left:auto}
+.db{padding:12px;display:flex;flex-direction:column;gap:11px}
+.ic{background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--sh)}
+.ict{font-size:10px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--md);margin-bottom:9px}
+.bw{border-radius:50px;padding:9px 14px;font-size:13px;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px;justify-content:center;width:100%}
+.al{display:flex;flex-direction:column;gap:6px}
+.ai{display:flex;align-items:center;gap:9px;background:var(--bg);border-radius:var(--rs);padding:8px 11px}
+.aic{font-size:16px}.ai p{font-size:12px;font-weight:600;color:var(--tx)}
+.acd{border-radius:var(--rs);overflow:hidden;margin-top:6px;border:1px solid var(--li)}
+.aci{border-bottom:1px solid var(--li)}.aci:last-child{border-bottom:none}
+.act{background:var(--bg);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:12px;font-weight:700;color:var(--tx);border:none;width:100%;text-align:left;gap:8px}
+.aar{transition:.2s;font-size:11px;color:var(--md);flex-shrink:0}
+.aci.open .aar{transform:rotate(180deg)}.acb{max-height:0;overflow:hidden;transition:max-height .26s cubic-bezier(.4,0,.2,1);background:#fff}.aci.open .acb{max-height:260px}
+.acct{padding:10px 12px;font-size:12px;color:var(--md);line-height:1.7}
+.cbs{display:flex;flex-direction:column;gap:8px}
+.cb2{border:none;border-radius:50px;padding:12px 16px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-family:'Nunito',sans-serif;transition:.15s;text-decoration:none;width:100%}
+.cb2:active{transform:scale(.97);opacity:.88}
+.cb2.p{background:linear-gradient(135deg,var(--go),var(--g2));color:#fff;box-shadow:0 4px 12px rgba(200,137,26,.3)}.cb2.s{background:linear-gradient(135deg,#2980b9,#3498db);color:#fff;box-shadow:0 4px 12px rgba(52,152,219,.25)}
+#p3{background:linear-gradient(160deg,#0f2752 0%,#1a3a6b 100%)}
+.qh{padding:24px 16px 12px;text-align:center}.qi{font-size:42px}.qh h2{font-family:'Montserrat',sans-serif;font-size:19px;font-weight:900;color:#fff;margin-top:7px}.qh p{color:rgba(255,255,255,.62);font-size:12px;margin-top:3px;font-weight:600}
+.ql{padding:0 13px 18px;display:flex;flex-direction:column;gap:11px}
+.qc{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:var(--r);padding:16px;display:flex;gap:11px;align-items:flex-start}
+.qn{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0;font-family:'Montserrat',sans-serif}
+.n1{background:linear-gradient(135deg,#c0392b,#e74c3c)}.n2{background:linear-gradient(135deg,#27ae60,#2ecc71)}.n3{background:linear-gradient(135deg,var(--go),var(--g2))}
+.qc h4{color:#fff;font-size:13px;font-weight:800;margin-bottom:5px}.qc p{color:rgba(255,255,255,.67);font-size:12px;line-height:1.65}
+.sc{display:flex;align-items:center;gap:5px;margin-top:7px;flex-wrap:wrap}
+.sb2{background:rgba(255,255,255,.13);border-radius:7px;padding:4px 8px;font-size:10px;color:#fff;font-weight:700;text-align:center}
+.sa{color:var(--g2);font-size:14px}
+/* RECHERCHE : overlay ancre en haut, clavier ne cache pas le champ */
+#so{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:800;display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .18s,transform .18s;padding-top:var(--st)}
+#so.open{opacity:1;pointer-events:all;transform:none}
+.sot{background:var(--bl);padding:12px 13px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.sob{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:50%;width:32px;height:32px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sow{flex:1;background:rgba(255,255,255,.14);border-radius:50px;padding:9px 14px;display:flex;align-items:center;gap:7px}
+.sow span{font-size:15px}
+#soi{border:none;outline:none;background:none;font-family:'Nunito',sans-serif;font-size:15px;color:#fff;flex:1;min-width:0}
+#soi::placeholder{color:rgba(255,255,255,.5)}
+.soh{padding:9px 15px 4px;font-size:12px;color:var(--md);font-weight:600;flex-shrink:0}
+#sol{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 12px 14px;display:flex;flex-direction:column;gap:7px}
+#sol::-webkit-scrollbar{display:none}
+.si{background:#fff;border-radius:var(--r);padding:12px 13px;display:flex;align-items:center;gap:9px;cursor:pointer;border:none;text-align:left;width:100%;box-shadow:var(--sh);transition:.13s}
+.si:active{transform:scale(.98)}
+.sii{font-size:24px;flex-shrink:0}.sit{flex:1}.sit h4{font-size:13px;font-weight:800;color:var(--tx)}.sit p{font-size:11px;color:var(--md);margin-top:1px;font-weight:600}
+.sib{font-size:10px;font-weight:700;color:#fff;padding:3px 8px;border-radius:50px;flex-shrink:0}
+.se{text-align:center;padding:28px 18px;color:var(--md);font-size:13px;font-weight:600}
+#ib{position:absolute;bottom:calc(62px + var(--sb));left:50%;transform:translateX(-50%);background:var(--bl);color:#fff;border-radius:12px;padding:9px 15px;display:flex;align-items:center;gap:8px;box-shadow:0 5px 20px rgba(0,0,0,.26);font-size:12px;font-weight:700;z-index:400;white-space:nowrap;animation:fu .3s ease;cursor:pointer}
+#ib .ix{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:50%;width:19px;height:19px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<div class="pages">
+
+<div class="pg on" id="p0">
+  <div class="hero a">
+    <div class="lr"><div class="li2">
+      <img src="Icon.png" alt="Logo" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <span class="lf">&#x1F9ED;</span>
+    </div></div>
+    <h1 class="at">Mon Guide <span>Citoyen</span></h1>
+    <p class="as">Votre alli&#233; au quotidien<br>en &#206;le-de-France</p>
+    <button class="cta" onclick="go(1)">&#128269; D&#233;couvrir l'app</button>
+  </div>
+  <div class="hcs">
+    <div class="hc a a1"><div class="hci">&#127963;</div><div class="hct"><h4>Trouvez la bonne collectivit&#233;</h4><p>Commune, D&#233;partement ou R&#233;gion &#8212; on vous guide.</p></div></div>
+    <div class="hc a a2"><div class="hci">&#128222;</div><div class="hct"><h4>Contactez le bon interlocuteur</h4><p>Acc&#233;dez directement aux services comp&#233;tents.</p></div></div>
+    <div class="hc a a3"><div class="hci">&#128161;</div><div class="hct"><h4>Comprenez la d&#233;centralisation</h4><p>Quiz, infos cl&#233;s et astuces citoyennes.</p></div></div>
+  </div>
+  <div class="rb a a4"><span>&#11088;</span><span>Un projet de la R&#233;gion &#206;le-de-France</span></div>
+</div>
+
+<div class="pg" id="p1">
+  <div class="sh"><h2>Trouver ma Collectivit&#233;</h2><p>Choisissez votre th&#233;matique</p></div>
+  <div class="sbar" onclick="openS()"><span>&#128269;</span><span class="sbp">Rechercher un probl&#232;me&#8230;</span></div>
+  <div class="tg">
+    <button class="tc cr a a1" onclick="det('transports')"><div class="tci">&#128652;</div><div class="tcl">Transports<br>Franciliens</div><div class="tcs">IDF Mobilit&#233;s</div></button>
+    <button class="tc ct a a2" onclick="det('lycees')"><div class="tci">&#127891;</div><div class="tcl">Lyc&#233;es &amp;<br>Formation</div><div class="tcs">R&#233;gion</div></button>
+    <button class="tc cb a a3" onclick="det('social')"><div class="tci">&#127968;</div><div class="tcl">Aide Sociale &amp;<br>Logement</div><div class="tcs">D&#233;partement</div></button>
+    <button class="tc cg a a4" onclick="det('environnement')"><div class="tci">&#127795;</div><div class="tcl">Environnement<br>&amp; Nature</div><div class="tcs">R&#233;gion / Commune</div></button>
+    <button class="tc cp a a5" onclick="det('securite')"><div class="tci">&#128737;</div><div class="tcl">S&#233;curit&#233; &amp;<br>Police</div><div class="tcs">Ville / &#201;tat</div></button>
+    <button class="tc co a a6" onclick="det('sante')"><div class="tci">&#9877;</div><div class="tcl">Sant&#233; &amp;<br>Handicap</div><div class="tcs">D&#233;partement</div></button>
+    <div class="mc" onclick="openS()"><div class="pl">&#10133;</div><p>Plus de<br>th&#233;matiques&#8230;</p></div>
+  </div>
+</div>
+
+<div class="pg" id="p2">
+  <div class="dh cr" id="dh">
+    <button class="bk" onclick="back()">&#8592;</button>
+    <div class="dhi"><h2 id="dt">&#8212;</h2><p id="ds">&#8212;</p></div>
+    <div class="dhx" id="di"></div>
+  </div>
+  <div class="db">
+    <div class="ic a"><div class="ict">&#127963; Collectivit&#233; comp&#233;tente</div><div class="bw" id="dw">&#8212;</div></div>
+    <div class="ic a a1">
+      <div class="ict">&#9889; Actions concr&#232;tes</div>
+      <div class="al" id="da"></div>
+      <div class="acd" id="dacc"></div>
+    </div>
+    <div class="ic a a2"><div class="ict">&#128222; Contacter le bon interlocuteur</div><div class="cbs" id="dc"></div></div>
+  </div>
+</div>
+
+<div class="pg" id="p3">
+  <div class="qh"><div class="qi">&#128161;</div><h2>Le Saviez-Vous ?</h2><p>3 infos-cl&#233;s sur la d&#233;centralisation</p></div>
+  <div class="ql">
+    <div class="qc a">
+      <div class="qn n1">1</div>
+      <div>
+        <h4>La D&#233;centralisation depuis 1982</h4>
+        <p>L'&#201;tat a transf&#233;r&#233; des comp&#233;tences aux collectivit&#233;s. Chaque niveau a son domaine : la R&#233;gion planifie, le D&#233;partement solidarise, la Commune agit au quotidien.</p>
+        <div class="sc"><div class="sb2">&#201;tat</div><div class="sa">&#8594;</div><div class="sb2">R&#233;gion</div><div class="sa">&#8594;</div><div class="sb2">Dpt</div><div class="sa">&#8594;</div><div class="sb2">Commune</div></div>
+      </div>
+    </div>
+    <div class="qc a a2">
+      <div class="qn n2">2</div>
+      <div>
+        <h4>Lyc&#233;e &#8800; Coll&#232;ge</h4>
+        <p>Ce n'est pas la m&#234;me collectivit&#233; ! La <strong style="color:#1abc9c">R&#233;gion</strong> g&#232;re les lyc&#233;es. Le <strong style="color:#3498db">D&#233;partement</strong> g&#232;re les coll&#232;ges.</p>
+        <div class="sc"><div class="sb2">Lyc&#233;e &#8594; R&#233;gion</div><div class="sa" style="color:#aaa">vs</div><div class="sb2">Coll&#232;ge &#8594; D&#233;pt.</div></div>
+      </div>
+    </div>
+    <div class="qc a a4">
+      <div class="qn n3">3</div>
+      <div>
+        <h4>La Mairie : premier r&#233;flexe !</h4>
+        <p>Voirie locale, urbanisme, &#233;tat civil, s&#233;curit&#233; de proximit&#233; : c'est la <strong style="color:#f5c842">Mairie</strong> qu'il faut contacter en premier lieu.</p>
+        <div class="sc"><div class="sb2">Mairie</div><div class="sa">&#8594;</div><div class="sb2">Voirie</div><div class="sa" style="color:#aaa">+</div><div class="sb2">&#201;tat civil</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div id="so">
+  <div class="sot">
+    <button class="sob" onclick="closeS()">&#8592;</button>
+    <div class="sow"><span>&#128269;</span>
+      <input id="soi" type="search" placeholder="Ex : bus, lycee, RSA..." autocomplete="off" autocorrect="off" spellcheck="false" oninput="filterS(this.value)">
+    </div>
+  </div>
+  <div class="soh">Toutes les th&#233;matiques &#8212; tapez pour filtrer</div>
+  <div id="sol"></div>
+</div>
+
+<div class="bnav">
+  <button class="bn sel" id="b0" onclick="go(0)"><div class="bi">&#127968;</div><div class="bt">Accueil</div></button>
+  <button class="bn"     id="b1" onclick="go(1)"><div class="bi">&#128194;</div><div class="bt">Th&#232;mes</div></button>
+  <button class="bn"     id="b3" onclick="go(3)"><div class="bi">&#128161;</div><div class="bt">Le Sav.-vous</div><div class="dot"></div></button>
+</div>
+</div>
+
+<script>
+var D={
+transports:{t:"Transports Franciliens",i:"&#128652;",s:"IDF Mobilit&#233;s",sub:"Collectivit&#233; : Ile-de-France Mobilit&#233;s",who:"&#128652; Ile-de-France Mobilit&#233;s",wb:"linear-gradient(135deg,#c0392b,#e74c3c)",cl:"cr",
+  act:[{i:"&#128647;",t:"Gestion du r&#233;seau RATP / SNCF"},{i:"&#127915;",t:"Tarification Navigo et abonnements"},{i:"&#128506;",t:"Planification des nouvelles lignes"},{i:"&#9855;",t:"Accessibilit&#233; des transports"}],
+  acc:[{h:"Qui g&#232;re quoi exactement ?",c:"IDF Mobilit&#233;s organise tous les transports collectifs franciliens : m&#233;tro, RER, bus, tramway, transilien. La RATP et la SNCF sont ses op&#233;rateurs sous contrat."},{h:"Combien co&#251;te un Navigo ?",c:"Le forfait Navigo toutes zones co&#251;te 86,40 euros/mois pour les adultes. Des r&#233;ductions existent pour les jeunes, demandeurs d'emploi et personnes &#224; faibles revenus."}],
+  con:[{l:"&#127760; Site IDF Mobilit&#233;s",u:"https://www.iledefrance-mobilites.fr",c:"p"},{l:"Info trafic temps r&#233;el",u:"https://www.vianavigo.com",c:"s"}]},
+lycees:{t:"Lyc&#233;es et Formation",i:"&#127891;",s:"R&#233;gion Ile-de-France",sub:"Collectivit&#233; : R&#233;gion Ile-de-France",who:"&#127979; R&#233;gion Ile-de-France",wb:"linear-gradient(135deg,#16a085,#1abc9c)",cl:"ct",
+  act:[{i:"&#127959;",t:"Construction et entretien des lyc&#233;es"},{i:"&#128187;",t:"Equipement num&#233;rique (tablettes)"},{i:"&#127869;",t:"Aide &#224; la restauration scolaire"},{i:"&#128652;",t:"Transports scolaires"}],
+  acc:[{h:"Quelles aides pour les lyc&#233;ens ?",c:"La R&#233;gion propose des aides pour les manuels scolaires, l'&#233;quipement sportif, les voyages scolaires, et des bourses r&#233;gionales pour les apprentis."},{h:"Diff&#233;rence R&#233;gion et Acad&#233;mie ?",c:"La R&#233;gion s'occupe des b&#226;timents. L'Acad&#233;mie (Etat) g&#232;re les enseignants, les programmes et les examens."}],
+  con:[{l:"&#127891; Portail des lyc&#233;es IDF",u:"https://lycees.iledefrance.fr",c:"p"},{l:"&#128176; Aides r&#233;gionales jeunes",u:"https://www.iledefrance.fr/aides-regionales",c:"s"}]},
+social:{t:"Aide Sociale et Logement",i:"&#127968;",s:"Conseil D&#233;partemental",sub:"Collectivit&#233; : D&#233;partement",who:"&#127963; Conseil D&#233;partemental",wb:"linear-gradient(135deg,#2980b9,#3498db)",cl:"cb",
+  act:[{i:"&#128182;",t:"RSA - Revenu de Solidarit&#233; Active"},{i:"&#128116;",t:"APA - Aide aux personnes ag&#233;es"},{i:"&#127968;",t:"Logement social (HLM)"},{i:"&#128118;",t:"Protection de l'enfance"}],
+  acc:[{h:"Comment demander le RSA ?",c:"Le RSA se demande au Conseil D&#233;partemental ou via la CAF. Il est attribu&#233; aux personnes sans ressources suffisantes &#224; partir de 25 ans."},{h:"Comment demander un HLM ?",c:"La demande se fait en ligne sur le portail national. Vous recevrez un num&#233;ro unique d&#233;partemental (NUD) pour suivre votre dossier."}],
+  con:[{l:"&#127968; Demande logement social",u:"https://www.demande-logement-social.gouv.fr",c:"p"},{l:"&#128182; CAF - Aides et allocations",u:"https://www.caf.fr",c:"s"}]},
+environnement:{t:"Environnement et Nature",i:"&#127795;",s:"R&#233;gion et Commune",sub:"Collectivit&#233; : R&#233;gion et Commune",who:"&#127795; R&#233;gion et Commune",wb:"linear-gradient(135deg,#27ae60,#2ecc71)",cl:"cg",
+  act:[{i:"&#127807;",t:"Gestion des espaces verts r&#233;gionaux"},{i:"&#9851;",t:"Collecte et tri des d&#233;chets"},{i:"&#128167;",t:"Qualit&#233; de l'eau et assainissement"},{i:"&#127788;",t:"Lutte contre la pollution de l'air"}],
+  acc:[{h:"Qui g&#232;re les for&#234;ts en IDF ?",c:"Les for&#234;ts r&#233;gionales (Fontainebleau, Rambouillet) sont g&#233;r&#233;es par la R&#233;gion et l'ONF. La Commune g&#232;re ses propres parcs et jardins."},{h:"Comment signaler une pollution ?",c:"Signalez une pollution de l'air &#224; AirParif, une pollution de l'eau &#224; votre mairie ou &#224; l'Agence de l'Eau Seine-Normandie."}],
+  con:[{l:"&#128168; AirParif - Qualit&#233; de l'air",u:"https://www.airparif.fr",c:"p"},{l:"&#127807; R&#233;gion IDF",u:"https://www.iledefrance.fr",c:"s"}]},
+securite:{t:"S&#233;curit&#233; et Police",i:"&#128737;",s:"Mairie et Pr&#233;fecture",sub:"Collectivit&#233; : Ville / Etat",who:"&#128737; Mairie et Pr&#233;fecture",wb:"linear-gradient(135deg,#8e44ad,#9b59b6)",cl:"cp",
+  act:[{i:"&#128110;",t:"Police municipale (Commune)"},{i:"&#128660;",t:"Police nationale (Etat / Pr&#233;fecture)"},{i:"&#128658;",t:"Pompiers - SDIS (D&#233;partement)"},{i:"&#128249;",t:"Vid&#233;oprotection urbaine (Commune)"}],
+  acc:[{h:"Police municipale ou nationale ?",c:"La police municipale (mairie) g&#232;re la tranquillit&#233; locale : stationnement, bruit, march&#233;s. La police nationale traite les d&#233;lits et crimes."},{h:"Porter plainte en ligne ?",c:"Une pr&#233;-plainte en ligne est possible pour les vols et escroqueries via le portail gouvernemental, sans d&#233;placement au commissariat."}],
+  con:[{l:"&#128221; Pr&#233;-plainte en ligne",u:"https://www.pre-plainte-en-ligne.gouv.fr",c:"p"},{l:"&#128658; Pompiers de Paris (BSPP)",u:"https://www.pompiersparis.fr",c:"s"}]},
+sante:{t:"Sant&#233; et Handicap",i:"&#9877;",s:"D&#233;partement et ARS",sub:"Collectivit&#233; : D&#233;partement / Etat",who:"&#9877; D&#233;partement et ARS",wb:"linear-gradient(135deg,#d35400,#e67e22)",cl:"co",
+  act:[{i:"&#9855;",t:"MDPH - Maison D&#233;partementale du Handicap"},{i:"&#127973;",t:"Organisation des soins (ARS - Etat)"},{i:"&#128138;",t:"PMI - Protection Maternelle Infantile"},{i:"&#129491;",t:"EHPAD et maisons de retraite"}],
+  acc:[{h:"A quoi sert la MDPH ?",c:"La MDPH &#233;value les situations de handicap et attribue des aides comme l'AAH, la carte mobilit&#233; inclusion, et oriente vers des &#233;tablissements adapt&#233;s."},{h:"Comment trouver un m&#233;decin ?",c:"Doctolib et Ameli permettent de trouver des m&#233;decins disponibles. Pour les urgences non vitales, les maisons m&#233;dicales de garde sont ouvertes nuit et week-end."}],
+  con:[{l:"&#9855; Mon Parcours Handicap",u:"https://www.monparcourshandicap.gouv.fr",c:"p"},{l:"&#127973; Trouver un m&#233;decin",u:"https://www.doctolib.fr",c:"s"}]}
+};
+var KW={transports:["bus","metro","rer","train","navigo","transport","retard","sncf","ratp","tramway"],lycees:["lycee","ecole","formation","bourse","tablette","scolaire","enseignement"],social:["rsa","logement","hlm","aide","chomage","caf","allocation"],environnement:["pollution","dechet","nature","foret","eau","air","vert","recyclage"],securite:["police","securite","agression","plainte","cambriolage","bruit","pompier","vol"],sante:["medecin","sante","handicap","mdph","hopital","urgence","pharmacie"]};
+var COLS={cr:"#e74c3c",ct:"#1abc9c",cb:"#3498db",cg:"#2ecc71",cp:"#9b59b6",co:"#e67e22"};
+
+var stk=[0];
+var busy=false;
+history.replaceState(null,"",location.pathname+location.search);
+history.pushState(null,"",location.pathname+location.search);
+
+window.addEventListener("popstate",function(){
+  history.pushState(null,"",location.pathname+location.search);
+  if(document.getElementById("so").classList.contains("open")){closeS();return;}
+  if(stk.length>1){stk.pop();show(stk[stk.length-1]);}
+});
+
+function go(idx){
+  if(busy)return;
+  if(idx===stk[stk.length-1])return;
+  stk.push(idx);show(idx);
+}
+function back(){history.back();}
+
+function show(idx){
+  if(busy)return;busy=true;
+  var id="p"+idx;
+  var all=document.querySelectorAll(".pg");
+  for(var i=0;i<all.length;i++){
+    if(all[i].id===id){all[i].classList.remove("out");all[i].classList.add("on");all[i].scrollTop=0;}
+    else if(all[i].classList.contains("on")){all[i].classList.add("out");all[i].classList.remove("on");}
+  }
+  setTimeout(function(){
+    var out=document.querySelectorAll(".pg.out");
+    for(var i=0;i<out.length;i++){out[i].classList.remove("out");}
+    busy=false;
+  },280);
+  syncNav(idx);
+}
+function syncNav(idx){
+  var bs=document.querySelectorAll(".bn");
+  for(var i=0;i<bs.length;i++){bs[i].classList.remove("sel");}
+  var m={0:"b0",1:"b1",3:"b3"};
+  if(m[idx])document.getElementById(m[idx]).classList.add("sel");
+}
+
+function det(key){
+  var d=D[key];
+  document.getElementById("dt").innerHTML=d.t;
+  document.getElementById("ds").innerHTML=d.sub;
+  document.getElementById("di").innerHTML=d.i;
+  var dw=document.getElementById("dw");
+  dw.innerHTML=d.who;dw.style.background=d.wb;
+  document.getElementById("dh").className="dh "+d.cl;
+  var ahtml="";
+  for(var i=0;i<d.act.length;i++){ahtml+='<div class="ai"><span class="aic">'+d.act[i].i+'</span><p>'+d.act[i].t+'</p></div>';}
+  document.getElementById("da").innerHTML=ahtml;
+  var chtml="";
+  for(var i=0;i<d.acc.length;i++){
+    var id2="ac"+key+i;
+    chtml+='<div class="aci" id="'+id2+'"><button class="act" onclick="tog(\''+id2+'\')"><span>'+d.acc[i].h+'</span><span class="aar">&#9660;</span></button><div class="acb"><div class="acct">'+d.acc[i].c+'</div></div></div>';
+  }
+  document.getElementById("dacc").innerHTML=chtml;
+  var bhtml="";
+  for(var i=0;i<d.con.length;i++){bhtml+='<a class="cb2 '+d.con[i].c+'" href="'+d.con[i].u+'" target="_blank" rel="noopener noreferrer">'+d.con[i].l+'</a>';}
+  document.getElementById("dc").innerHTML=bhtml;
+  closeS();go(2);
+}
+function tog(id){
+  var el=document.getElementById(id);
+  var was=el.classList.contains("open");
+  var all=document.querySelectorAll(".aci");
+  for(var i=0;i<all.length;i++){all[i].classList.remove("open");}
+  if(!was)el.classList.add("open");
+}
+
+function ri(keys){
+  if(!keys.length)return'<div class="se">Aucun r&#233;sultat - essayez un autre mot</div>';
+  var h="";
+  for(var i=0;i<keys.length;i++){var d=D[keys[i]];h+='<button class="si" onclick="det(\''+keys[i]+'\')"><span class="sii">'+d.i+'</span><div class="sit"><h4>'+d.t+'</h4><p>'+d.sub+'</p></div><span class="sib" style="background:'+COLS[d.cl]+'">'+d.s+'</span></button>';}
+  return h;
+}
+function openS(){
+  document.getElementById("soi").value="";
+  document.getElementById("sol").innerHTML=ri(Object.keys(D));
+  document.getElementById("so").classList.add("open");
+  setTimeout(function(){document.getElementById("soi").focus();},200);
+}
+function filterS(v){
+  var vn=v.toLowerCase();
+  if(!vn){document.getElementById("sol").innerHTML=ri(Object.keys(D));return;}
+  var m=[];
+  var keys=Object.keys(D);
+  for(var i=0;i<keys.length;i++){
+    var k=keys[i];var d=D[k];
+    var tn=d.t.toLowerCase();
+    var found=tn.indexOf(vn)>=0;
+    if(!found&&KW[k]){for(var j=0;j<KW[k].length;j++){if(KW[k][j].indexOf(vn)>=0||vn.indexOf(KW[k][j])>=0){found=true;break;}}}
+    if(found)m.push(k);
+  }
+  document.getElementById("sol").innerHTML=ri(m);
+}
+function closeS(){document.getElementById("so").classList.remove("open");document.getElementById("soi").blur();}
+
+if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js").catch(function(){});});}
+
+var dp=null;
+window.addEventListener("beforeinstallprompt",function(e){
+  e.preventDefault();dp=e;
+  var b=document.createElement("div");b.id="ib";
+  b.innerHTML='<span>&#128242;</span><span>Installer l\'app</span><button class="ix" onclick="event.stopPropagation();this.parentElement.remove()">&#10005;</button>';
+  b.onclick=function(){if(!dp)return;dp.prompt();dp.userChoice.then(function(){dp=null;b.remove();});};
+  document.getElementById("app").appendChild(b);
+});
+window.addEventListener("appinstalled",function(){var b=document.getElementById("ib");if(b)b.remove();});
+</script>
+</body>
+</html>
