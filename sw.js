@@ -1,21 +1,32 @@
-// v3 — incrémente ce numéro à chaque mise à jour pour vider le cache
-const CACHE = 'guide-citoyen-v3';
+const CACHE = 'guide-citoyen-v1';
+// Utilisation de ./ pour que GitHub Pages trouve les fichiers dans le dossier
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon.png'
+];
 
 self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
   );
+  self.clients.claim();
 });
 
-// Network-first : on va toujours chercher sur le réseau, cache en fallback
 self.addEventListener('fetch', e => {
   e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
+    caches.match(e.request).then(r => {
+      return r || fetch(e.request).catch(() => caches.match('./index.html'));
+    })
   );
 });
